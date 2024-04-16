@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Article;
+use App\Models\ArticleComment;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -57,5 +58,10 @@ class User extends Authenticatable implements JWTSubject
     public function articles()
     {
         return $this->hasMany(Article::class);
+    }
+
+    public function articleComments()
+    {
+        return $this->hasMany(ArticleComment::class);
     }
 }

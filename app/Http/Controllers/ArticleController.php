@@ -50,7 +50,7 @@ class ArticleController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'article added successfully!',
+            'message' => 'Article added successfully!',
             'data' => $article
         ]);
     }
@@ -63,7 +63,7 @@ class ArticleController extends Controller
      */
     public function show($id)
     {
-        $articles = Article::find($id);
+        $articles = Article::with('comments')->find($id);
 
         return response()->json([
             'success' => true,
@@ -102,7 +102,7 @@ class ArticleController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'article changed successfully!',
+            'message' => 'Article changed successfully!',
             'data' => $article
         ]);
     }
@@ -120,7 +120,7 @@ class ArticleController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'article successfully deleted!',
+            'message' => 'Article successfully deleted!',
             'data' => $article
         ]);
     }
