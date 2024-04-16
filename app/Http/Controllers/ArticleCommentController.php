@@ -40,7 +40,17 @@ class ArticleCommentController extends Controller
             return response()->json($validator->messages(), 422);
         }
 
+        $user =  auth()->user();
         $comment = ArticleComment::find($comment_id);
+
+        if ($user->id != $comment->user_id)
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot change comments!',
+            ],403);
+        }
+
         $comment->body = $request->body;
         $comment->save();
 
@@ -53,7 +63,17 @@ class ArticleCommentController extends Controller
     }
     public function destroy($comment_id)
     {
+        $user =  auth()->user();
         $comment = ArticleComment::find($comment_id);
+
+        if ($user->id != $comment->user_id)
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot delete comments!',
+            ],403);
+        }
+
         $comment->delete();
 
         return response()->json([

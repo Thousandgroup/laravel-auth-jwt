@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use App\Http\Resources\ArticleShow;
 use Illuminate\Support\Facades\Validator;
 
 class ArticleController extends Controller
@@ -15,7 +16,7 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = Article::latest()->get();
+        $articles = Article::latest()->paginate(5);
 
         return response()->json([
             'success' => true,
@@ -63,12 +64,13 @@ class ArticleController extends Controller
      */
     public function show($id)
     {
+        $user =  auth()->user();
         $articles = Article::with('comments')->find($id);
 
         return response()->json([
             'success' => true,
             'message' => 'Article successfully found!',
-            'data' => $articles
+            'data' => new ArticleShow($articles)
         ]);
     }
 
@@ -94,8 +96,17 @@ class ArticleController extends Controller
         //     'title' =>  $request->title,
         //     'body' =>  $request->body,
         // ]);
-
+        $user =  auth()->user();
         $article = Article::find($id);
+
+        if ($user->id != $article->user_id)
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot change articles!',
+            ],403);
+        }
+
         $article->title = $request->title;
         $article->body = $request->body;
         $article->save();
@@ -115,7 +126,17 @@ class ArticleController extends Controller
      */
     public function destroy($id)
     {
+        $user =  auth()->user();
         $article = Article::find($id);
+
+        if ($user->id != $article->user_id)
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot delete articles!',
+            ],403);
+        }
+
         $article->delete();
 
         return response()->json([
